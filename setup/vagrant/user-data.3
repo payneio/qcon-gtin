@@ -15,7 +15,7 @@ coreos:
   fleet:
     public-ip: $public_ipv4
     etcd-servers: http://$private_ipv4:2379
-    metadata: role=central-services
+    metadata: role=central-services,docker-registry=can-host
   units:
   - name: etcd2.service
     command: start

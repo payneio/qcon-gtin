@@ -1,20 +1,20 @@
 executable=qcon-gtin
-account=payneio
+account=10.10.10.103:5000
 tag=qcon-gtin
-release=0.0.11
+release=0.0.14
 
 build/$(executable): *.go
 	mkdir -p build
 	go build -o build/$(executable)
 
+dist/$(executable): *.go
+	mkdir -p dist
+	GOOS=linux GOARCH=amd64 go build -o dist/$(executable)
+
 build/container: dist/$(executable)
 	docker build --no-cache -t $(executable) .
 	mkdir -p build
 	touch build/container
-
-dist/$(executable): *.go
-	mkdir -p dist
-	GOOS=linux GOARCH=amd64 go build -o dist/$(executable)
 
 .PHONY: run
 run: build/container
@@ -22,7 +22,7 @@ run: build/container
 
 .PHONY: release
 release: build/container
-	docker tag -f $(tag) $(account)/$(tag):$(release)
+	docker tag -f $(executable) $(account)/$(tag):$(release)
 	docker push $(account)/$(tag):$(release)
 
 .PHONY: clean

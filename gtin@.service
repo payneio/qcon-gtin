@@ -8,12 +8,12 @@ RestartSec=30
 PermissionsStartOnly=true
 ReadOnlyDirectories=/etc
 EnvironmentFile=/etc/environment
-Environment="RELEASE=0.0.11"
+Environment="RELEASE=0.0.14"
 
 TimeoutStartSec=5m
 ExecStartPre=-/usr/bin/docker kill gtin-%i
 ExecStartPre=-/usr/bin/docker rm gtin-%i
-ExecStartPre=/usr/bin/docker pull payneio/qcon-gtin:${RELEASE}
+ExecStartPre=/usr/bin/docker pull 10.10.10.103:5000/qcon-gtin:${RELEASE}
 
 ExecStart=/usr/bin/docker run \
   --name gtin-%i \
@@ -21,7 +21,7 @@ ExecStart=/usr/bin/docker run \
   --publish 19111:80 \
   --env SERVICE_NAME=gtin \
   --env SERVICE_ID=gtin-%i \
-    payneio/qcon-gtin:${RELEASE} -m
+    10.10.10.103:5000/qcon-gtin:${RELEASE} -m
 
 ExecStartPost=/usr/bin/sleep 5
 

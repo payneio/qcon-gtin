@@ -1,0 +1,30 @@
+[Unit]
+Description=A Cluster-Local Docker Registry
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=10
+EnvironmentFile=/etc/environment
+EnvironmentFile=/etc/stack_environment
+Environment="RELEASE=v0.8.0-beta.2"
+
+TimeoutStartSec=5m
+ExecStartPre=-/usr/bin/docker kill docker-registry 
+ExecStartPre=-/usr/bin/docker rm docker-registry 
+ExecStartPre=/usr/bin/docker pull registry:2.0 
+
+ExecStart=/usr/bin/docker run \
+  --name docker-registry \
+  --hostname docker-registry.${STACK_DNS_SUFFIX} \
+  --publish 5000:5000 \
+  --env SERVICE_5000_NAME=docker-registry \
+    registry:2.0 
+
+[X-Fleet]
+MachineMetadata=docker-registry=can-host
+
+[Install]
+WantedBy=multi-user.target
