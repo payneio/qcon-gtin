@@ -12,7 +12,7 @@ ExecStart=/usr/bin/etcdctl set /vulcand/backends/public-gtin/backend \
   '{"Type":"http"}'
 ExecStart=/usr/bin/etcdctl set /vulcand/frontends/public-gtin/frontend \
   '{"BackendId":"public-gtin", \
-    "Route":"Host(`qcon.demo`) && Path(`/stores/<storeID>/gtins/<gtin>`)", \
+    "Route":"Host(`api.qcon.demo`) && Path(`/stores/<storeID>/gtins/<gtin>`)", \
     "Type":"http"}'
 
 ExecStopPost=/usr/bin/printf "De-registering gtin with vulcand (public/frontend)"
