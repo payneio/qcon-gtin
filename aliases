@@ -1,0 +1,1 @@
+alias watch-public='while true; do curl -w "%{time_total}\n" -s http://api.qcon.demo/stores/3/gtins/123456789012; sleep 2; done;'
