@@ -1,0 +1,23 @@
+[Unit]
+Description=gtin proxy(vulcand) public frontend registration
+Requires=etcd2.service
+After=etcd2.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+
+ExecStartPre=/usr/bin/printf "Registering gtin with vulcand (public/frontend)"
+ExecStart=/usr/bin/etcdctl set /vulcand/backends/public-gtin/backend \
+  '{"Type":"http"}'
+ExecStart=/usr/bin/etcdctl set /vulcand/frontends/public-gtin/frontend \
+  '{"BackendId":"public-gtin", \
+    "Route":"Host(`qcon.demo`) && Path(`/stores/<storeID>/gtins/<gtin>`)", \
+    "Type":"http"}'
+
+ExecStopPost=/usr/bin/printf "De-registering gtin with vulcand (public/frontend)"
+ExecStopPost=/usr/bin/etcdctl rm --recursive /vulcand/frontends/public-gtin
+ExecStopPost=/usr/bin/etcdctl rm --recursive /vulcand/backends/public-gtin
+
+[Install]
+WantedBy=multi-user.target

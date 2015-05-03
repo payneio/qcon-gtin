@@ -1,0 +1,25 @@
+[Unit]
+Description=gtin proxy(vulcand) registration (${STACK}-qcon.demo/stores/:storeID/gtins/:gtin)
+Requires=etcd2.service
+After=etcd2.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+EnvironmentFile=/etc/stack_environment
+
+ExecStartPre=/usr/bin/printf "Registering gtin with vulcand (private/frontend)"
+ExecStart=/usr/bin/etcdctl set /vulcand/backends/${STACK_NAME}-gtin/backend \
+  '{"Type":"http"}'
+ExecStart=/usr/bin/etcdctl set /vulcand/frontends/${STACK_NAME}-gtin/frontend \
+  '{"BackendId":"${STACK_NAME}-gtin", \
+    "Route":"Host(`${STACK_NAME}-qcon.demo`) && Path(`/stores/<storeID>/gtins/<gtin>`)", \
+    "Type":"http"}'
+
+ExecStop=/usr/bin/printf "Un-registering gtin with vulcand (private/frontend)"
+ExecStopPost=/usr/bin/etcdctl rm --recursive /vulcand/backends/${STACK_NAME}-gtin
+ExecStopPost=/usr/bin/etcdctl rm --recursive /vulcand/frontends/${STACK_NAME}-gtin
+
+[Install]
+WantedBy=multi-user.target
+

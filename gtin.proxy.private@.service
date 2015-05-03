@@ -1,0 +1,24 @@
+[Unit]
+Description=gtin proxy(vulcand) instance registration
+Requires=etcd2.service
+After=etcd2.service
+
+[Service]
+# TODO: make this a TTL/heartbeat setup
+Type=oneshot
+RemainAfterExit=true
+EnvironmentFile=/etc/environment
+EnvironmentFile=/etc/stack_environment
+
+ExecStartPre=/usr/bin/printf "Registering gtin with vulcand (private/server)"
+ExecStart=/usr/bin/etcdctl set /vulcand/backends/${STACK_NAME}-gtin/servers/%i \
+  '{"URL":"http://${COREOS_PRIVATE_IPV4}:19111"}'
+
+ExecStop=/usr/bin/etcdctl rm /vulcand/backends/${STACK_NAME}-gtin/servers/%i
+ExecStopPost=/usr/bin/printf "De-registered gtin with vulcand (private/server)"
+
+[X-Fleet]
+MachineOf=gtin@%i.service
+
+[Install]
+WantedBy=multi-user.target

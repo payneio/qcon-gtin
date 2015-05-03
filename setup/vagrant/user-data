@@ -1,0 +1,51 @@
+#cloud-config
+
+---
+coreos:
+  etcd2:
+    name: etcd-$private_ipv4
+    data-dir: /var/lib/etcd
+    initial-cluster: etcd-10.10.10.101=http://10.10.10.101:2380,etcd-10.10.10.102=http://10.10.10.102:2380,etcd-10.10.10.103=http://10.10.10.103:2380
+    initial-cluster-state: new
+    initial-cluster-token: qcon-etcd-cluster-1
+    initial-advertise-peer-urls: http://$private_ipv4:2380
+    listen-peer-urls: http://$private_ipv4:2380,http://$private_ipv4:7001
+    advertise-client-urls: http://$public_ipv4:2379
+    listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
+  fleet:
+    public-ip: $public_ipv4
+    etcd-servers: http://$private_ipv4:2379
+    metadata: role=central-services
+  units:
+  - name: etcd2.service
+    command: start
+  - name: fleet.service
+    command: start
+  - name: docker-tcp.socket
+    command: start
+    enable: true
+    content: |
+      [Unit]
+      Description=Docker Socket for the API
+
+      [Socket]
+      ListenStream=2375
+      Service=docker.service
+      BindIPv6Only=both
+
+      [Install]
+      WantedBy=sockets.target
+  - name: docker.service
+    drop-ins:
+      - name: 50-dns-search.conf
+        content: |
+          [Service]
+          Environment='DOCKER_OPTS=--dns 172.17.42.1 --dns-search cluster.local'
+write_files: 
+  - path: /etc/stack_environment
+    content: |
+      STACK_NAME=blue
+      STACK_ROLE=central-services
+      STACK_DNS_SUFFIX=cluster.local
+      STACK_VISIBLE_LOAD_BALANCER=some-ip
+

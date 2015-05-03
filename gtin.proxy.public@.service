@@ -1,0 +1,23 @@
+[Unit]
+Description=gtin vulcand instance registration (public)
+Requires=etcd2.service
+After=etcd2.service
+
+[Service]
+# TODO: make this a TTL/heartbeat setup
+Type=oneshot
+RemainAfterExit=true
+EnvironmentFile=/etc/environment
+
+ExecStartPre=/usr/bin/printf "Registering gtin with vulcand (public/server)"
+ExecStart=/usr/bin/etcdctl set /vulcand/backends/public-gtin/servers/%i \
+  '{"URL":"http://${COREOS_PRIVATE_IPV4}:19111"}'
+
+ExecStop=/usr/bin/printf "De-registering gtin with vulcand (public/server)"
+ExecStopPost=/usr/bin/etcdctl rm /vulcand/backends/public-gtin/servers/%i
+
+[X-Fleet]
+MachineOf=gtin@%i.service
+
+[Install]
+WantedBy=multi-user.target

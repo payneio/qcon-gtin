@@ -1,0 +1,6 @@
+qcon-gtin
+data/
+build/
+dist/
+setup/vagrant/.vagrant
+.DS_Store
