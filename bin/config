@@ -1,0 +1,11 @@
+#!/bin/bash
+
+here=$(pwd)
+path=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+cd $path/../demo_env/vagrant
+vagrant ssh-config
+cd $here
+
+ssh-add ~/.vagrant.d/insecure_private_key
+export FLEETCTL_TUNNEL=127.0.0.1:2200

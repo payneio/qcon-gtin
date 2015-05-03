@@ -15,7 +15,7 @@ Make sure the following is in /etc/hosts:
 Start up Vagrant/CoreOS cluster:
 
 ```
-cd setup/vagrant
+cd demo_env/vagrant
 vagrant up
 vagrant ssh-config
 vagrant ssh-add {key from ssh-config}
@@ -29,7 +29,7 @@ cd ..
 Launch service:
 
 ```
-./launch_service.sh
+./bin/launch_service
 ```
 
 Test at:
