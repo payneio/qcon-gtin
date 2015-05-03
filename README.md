@@ -34,7 +34,8 @@ Launch service:
 
 Test at:
 
-http://blue-api.qcon.demo/stores/health/gtins/check
+http://api-blue.qcon.demo/stores/health/gtins/check
+
 http://api.qcon.demo/stores/health/gtins/check
 
 
