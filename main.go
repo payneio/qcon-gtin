@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"os"
-	// "strings"
 )
 
 var csvData = false
@@ -43,7 +42,6 @@ func main() {
 		// source = &CSVGTINSource{}
 		// src.DataPath = *csvPath
 	} else {
-		// src := source.(*CSVGTINSource)
 		// Dynamo by default
 		source = &DynamoGTINSource{}
 		src := source.(*DynamoGTINSource)
@@ -59,13 +57,9 @@ func main() {
 	r := gin.Default()
 
 	r.GET("/stores/:storeId/gtins/:gtin", func(c *gin.Context) {
-		storeId := c.Params.ByName("storeId")
-		rawGTINParam := c.Params.ByName("gtin")
-		gtinParam := rawGTINParam
 
-		// if len(gtinParam) == 13 {
-		// gtinParam = strings.TrimPrefix(gtinParam, "0")
-		// }
+		storeId := c.Params.ByName("storeId")
+		gtinParam := c.Params.ByName("gtin")
 
 		if storeId == "health" && gtinParam == "check" {
 			c.String(200, "Healthy")
@@ -86,7 +80,7 @@ func main() {
 			return
 		}
 
-		gtin.GTIN = rawGTINParam
+		gtin.GTIN = gtinParam
 		gtin.DisplayGTIN = gtinParam
 		gtin.DisplayGTINType = "UPC-A"
 		if len(gtinParam) == 13 {
@@ -101,9 +95,8 @@ func main() {
 var ErrGTINNotFound = errors.New("GTIN not found.")
 
 type StoreDetailPrice struct {
-	RegularRetail     string `json:"regularRetail"`
-	SpecialRetail     string `json:"specialRetail"`
-	IsClearancePriced bool   `json:"isClearancePriced"`
+	RegularRetail string `json:"regularRetail"`
+	SpecialRetail string `json:"specialRetail"`
 }
 
 type GTINStoreDetail struct {
@@ -121,22 +114,12 @@ type GTIN struct {
 	Style               string            `json:"style"`
 	OriginalRetail      string            `json:"originalRetail"`
 	RecommendRetail     string            `json:"recommendRetail"`
-	DivisionCode        string            `json:"divisionCode"`
-	SubdivisionCode     string            `json:"subdivisionCode"`
 	SubdivisionName     string            `json:"subdivisionName"`
-	DepartmentCode      string            `json:"departmentCode"`
-	DepartmentName      string            `json:"departmentName"`
-	ClassCode           string            `json:"classCode"`
 	ClassName           string            `json:"className"`
-	SubclassCode        string            `json:"subclassCode"`
 	SubclassName        string            `json:"subclassName"`
 	Description         string            `json:"description"`
-	LongDescription     string            `json:"longDescription"`
 	Color               string            `json:"color"`
-	ColorCode           string            `json:"colorCode"`
-	SupplierCode        string            `json:"supplierCode"`
 	SupplierName        string            `json:"supplierName"`
 	VendorProductNumber string            `json:"vendorProductNumber"`
-	BundleItemCount     int               `json:"bundleItemCount"`
 	StoreDetail         []GTINStoreDetail `json:"storeDetail"`
 }

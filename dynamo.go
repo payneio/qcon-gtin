@@ -61,7 +61,6 @@ func (dyn *DynamoGTINSource) Get(gtinId string) (*GTIN, error) {
 	item := resp.Item
 	productInfo := buildProductInfo(item)
 	productInfo.GTIN = gtinId
-	productInfo.BundleItemCount = 1
 
 	return productInfo, nil
 
