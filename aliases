@@ -1,1 +1,12 @@
 alias watch-public='while true; do curl -w "%{time_total}\n" -s http://api.qcon.demo/stores/3/gtins/123456789012; sleep 2; done;'
+alias watch-private='while true; do curl -w "%{time_total}\n" -s http://api-blue.qcon.demo/stores/3/gtins/0123456789012; sleep 2; done;'
+
+function redeploy-service(){
+  fleetctl destroy $1.proxy.public@$2.service
+  fleetctl destroy $1.proxy.private@$2.service
+  fleetctl destroy $1@$2.service
+  fleetctl start $1@$2.service
+  fleetctl start $1.proxy.private@$2.service
+  fleetctl start $1.proxy.public@$2.service
+}
+
