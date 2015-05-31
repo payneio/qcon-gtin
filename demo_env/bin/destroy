@@ -1,0 +1,15 @@
+#!/bin/bash
+
+path=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+cd $path/../vagrant
+
+vagrant destroy
+
+docker rmi registry:2.0
+docker rmi mailgun/vulcand:v0.8.0-beta.2
+docker rmi qcon-gtin:0.0.18
+
+cd ../..
+
+make clean
