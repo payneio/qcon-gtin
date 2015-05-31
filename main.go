@@ -9,15 +9,13 @@ import (
 	"os"
 )
 
-var csvData = false
-var dynamoData = false
-
 type GTINSource interface {
 	Start() error
 	Get(string) (*GTIN, error)
 }
 
 var gtins map[int]GTIN
+var hostname, _ = os.Hostname()
 
 func getopt(name string, dfault string) string {
 	value := os.Getenv(name)
@@ -30,7 +28,6 @@ func getopt(name string, dfault string) string {
 func main() {
 
 	port := flag.String("p", "80", "Port")
-	csvPath := flag.String("c", "", "Path to a csv file to use for GTIN data.")
 	mockData := flag.Bool("m", false, "Return mock GTIN data.")
 	flag.Parse()
 
@@ -38,9 +35,6 @@ func main() {
 
 	if *mockData {
 		source = &MockGTINSource{}
-	} else if *csvPath != "" {
-		// source = &CSVGTINSource{}
-		// src.DataPath = *csvPath
 	} else {
 		// Dynamo by default
 		source = &DynamoGTINSource{}
@@ -76,23 +70,19 @@ func main() {
 			return
 		}
 		if gtin.GTIN == "" {
-			c.String(404, "GTIN not found.")
+			c.String(404, ErrGTINNotFound.Error())
 			return
 		}
 
 		gtin.GTIN = gtinParam
-		gtin.DisplayGTIN = gtinParam
-		gtin.DisplayGTINType = "UPC-A"
-		if len(gtinParam) == 13 {
-			gtin.DisplayGTINType = "EAN-13"
-		}
 
+		gtin.Hostname = hostname
 		c.JSON(200, gtin)
 	})
 	r.Run(fmt.Sprintf(":%s", *port))
 }
 
-var ErrGTINNotFound = errors.New("GTIN not found.")
+var ErrGTINNotFound = errors.New("[" + hostname + "] GTIN not found.")
 
 type StoreDetailPrice struct {
 	RegularRetail string `json:"regularRetail"`
@@ -105,21 +95,19 @@ type GTINStoreDetail struct {
 }
 
 type GTIN struct {
-	GTIN                string            `json:"gtin"`
-	DisplayGTIN         string            `json:"displayGTIN"`
-	DisplayGTINType     string            `json:"displayGTINType"` // UPC-A or EAN-13
-	SKU                 string            `json:"sku"`
-	Size1               string            `json:"size1"`
-	Size2               string            `json:"size2"`
-	Style               string            `json:"style"`
-	OriginalRetail      string            `json:"originalRetail"`
-	RecommendRetail     string            `json:"recommendRetail"`
-	SubdivisionName     string            `json:"subdivisionName"`
-	ClassName           string            `json:"className"`
-	SubclassName        string            `json:"subclassName"`
-	Description         string            `json:"description"`
-	Color               string            `json:"color"`
-	SupplierName        string            `json:"supplierName"`
-	VendorProductNumber string            `json:"vendorProductNumber"`
-	StoreDetail         []GTINStoreDetail `json:"storeDetail"`
+	Hostname        string            `json:"host"`
+	GTIN            string            `json:"gtin"`
+	SKU             string            `json:"sku"`
+	Size1           string            `json:"size1"`
+	Size2           string            `json:"size2"`
+	Style           string            `json:"style"`
+	OriginalRetail  string            `json:"originalRetail"`
+	RecommendRetail string            `json:"recommendRetail"`
+	SubdivisionName string            `json:"subdivisionName"`
+	ClassName       string            `json:"className"`
+	SubclassName    string            `json:"subclassName"`
+	Description     string            `json:"description"`
+	Color           string            `json:"color"`
+	SupplierName    string            `json:"supplierName"`
+	StoreDetail     []GTINStoreDetail `json:"storeDetail"`
 }

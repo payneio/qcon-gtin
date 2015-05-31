@@ -1,7 +1,7 @@
 executable=qcon-gtin
 repository=10.10.10.103:5000
 container=qcon-gtin
-tag=0.0.16
+tag=0.0.18
 
 build/$(executable): *.go
 	mkdir -p build

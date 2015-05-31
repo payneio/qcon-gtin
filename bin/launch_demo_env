@@ -1,0 +1,9 @@
+#!/bin/bash
+
+path=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+cd $path/../demo_env
+
+fleetctl start docker-registry
+fleetctl start vulcand@{1..3} 
+

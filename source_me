@@ -1,0 +1,27 @@
+#!/bin/bash
+
+export PS1="$ "
+
+here=$(pwd)
+path=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+# cd $path/demo_env/vagrant
+# vagrant ssh-config
+# cd $here
+
+ssh-add ~/.vagrant.d/insecure_private_key
+export FLEETCTL_TUNNEL=127.0.0.1:2200
+echo "fleetctl tunnel set."
+
+alias watch-public='while true; do curl -w " %{time_total}\n" -s http://api.qcon.demo/stores/3/gtins/123456789012; sleep 1; done;'
+alias watch-private='while true; do curl -w " %{time_total}\n" -s http://api-blue.qcon.demo/stores/3/gtins/0123456789012; sleep 1; done;'
+
+function redeploy-service(){
+  fleetctl destroy $1.proxy.public@$2.service
+  fleetctl destroy $1.proxy.private@$2.service
+  fleetctl destroy $1@$2.service
+  fleetctl start $1@$2.service
+  fleetctl start $1.proxy.private@$2.service
+  fleetctl start $1.proxy.public@$2.service
+}
+
