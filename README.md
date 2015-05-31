@@ -43,6 +43,7 @@ source source_me
 Test at:
 
 http://api-blue.qcon.demo/stores/health/gtins/check
+
 http://api.qcon.demo/stores/health/gtins/check
 
 #### Update the qcon-gtin service
