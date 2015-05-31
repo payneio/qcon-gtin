@@ -41,10 +41,21 @@ source source_me
 ```
 
 Test at:
+
 http://api-blue.qcon.demo/stores/health/gtins/check
 http://api.qcon.demo/stores/health/gtins/check
 
-#### Update qcon service
+#### Update the qcon-gtin service
+
+Modify whatever you'd like in the `main.go` source for the service. For the demo, we're going to add this:
+
+```
+ if len(gtinParam) == 13 {
+   gtinParam = strings.TrimPrefix(gtinParam, "0")
+ }
+```
+
+Note: If you want to be able to deploy multiple versions in your cluster, give this new build a new version by ticking the version number in `Makefile` and `gtin@.service` 
 
 Build:
 ``` 
