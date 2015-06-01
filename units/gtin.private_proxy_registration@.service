@@ -4,7 +4,6 @@ Requires=etcd2.service
 After=etcd2.service
 
 [Service]
-# TODO: make this a TTL/heartbeat setup
 Type=oneshot
 RemainAfterExit=true
 EnvironmentFile=/etc/environment
@@ -22,3 +21,4 @@ MachineOf=gtin@%i.service
 
 [Install]
 WantedBy=multi-user.target
+

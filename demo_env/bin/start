@@ -5,15 +5,15 @@ path=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd $path/../..
 source source_me
 
-cd $path/../vagrant
+cd demo_env/vagrant
 vagrant box update
 vagrant up
 
-cd $path/..
+cd ..
 fleetctl start docker-registry
 fleetctl start vulcand@{1..3} 
 
-cd $path/../..
+cd ..
 make release
 bin/launch_service
 

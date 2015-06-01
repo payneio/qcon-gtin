@@ -6,9 +6,8 @@ cd $path/../vagrant
 
 vagrant destroy
 
-docker rmi registry:2.0
-docker rmi mailgun/vulcand:v0.8.0-beta.2
-docker rmi qcon-gtin:0.0.18
+docker rmi qcon-gtin:latest
+docker rmi 10.10.10.103:5000/qcon-gtin:0.0.18
 
 cd ../..
 

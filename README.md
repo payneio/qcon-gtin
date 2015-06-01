@@ -71,12 +71,12 @@ make release
 Deploy the GTIN service (with zero downtime):
 ```
 cd units
-fleetctl destroy gtin.proxy.public@1.service
-fleetctl destroy gtin.proxy.private@1.service
+fleetctl destroy gtin.public_proxy_registration@1.service
+fleetctl destroy gtin.private_proxy_registration@1.service
 fleetctl destroy gtin@1.service
 fleetctl start gtin@1.service
-fleetctl start gtin.proxy.private@1.service
-fleetctl start gtin.proxy.public@1.service
+fleetctl start gtin.private_proxy_registration@1.service
+fleetctl start gtin.publix_proxy_registration@1.service
 ```
 
 Or, use the alias:
